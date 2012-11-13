@@ -101,11 +101,11 @@ module.exports = function(grunt) {
     grunt.utils.async.series([
       // Building extension
       function(callback){
-        grunt.helper('crx', extension, callback);
+        crx(extension, callback);
       },
       // Building manifest
       function(callback){
-        grunt.helper('crx-manifest', extension, callback);
+        crxManifest(extension, callback);
       },
       // Clearing stuff
       function(callback){
@@ -120,7 +120,7 @@ module.exports = function(grunt) {
   // HELPERS
   // ==========================================================================
 
-  grunt.registerHelper('crx', function(ChromeExtension, callback) {
+  function crx(ChromeExtension, callback) {
     grunt.utils.async.series([
       function(done){
         ChromeExtension.load(done);
@@ -148,9 +148,9 @@ module.exports = function(grunt) {
         });
       }
     ], callback);
-  });
+  }
 
-  grunt.registerHelper('crx-manifest', function(ChromeExtension, callback) {
+  function crxManifest(ChromeExtension, callback) {
     if (!ChromeExtension.manifest.update_url || !ChromeExtension.codebase){
       return callback();
     }
@@ -161,5 +161,6 @@ module.exports = function(grunt) {
     grunt.file.write(path.join(dest, path.basename(ChromeExtension.manifest.update_url)), ChromeExtension.updateXML);
 
     callback();
-  });
+  }
+
 };
