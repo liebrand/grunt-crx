@@ -34,17 +34,17 @@ function configure(defaults){
 
   // Configuring stuff
   self.requiresConfig(p('dest'), p('src'));
-  grunt.utils._.defaults(self.data, defaults);
+  grunt.util._.defaults(self.data, defaults);
 
   // Checking availability
-  if (!path.existsSync(self.file.src)){
+  if (!path.existsSync(self.data.src)){
     throw self.taskError('Unable to locate source directory.');
   }
   if (!path.existsSync(self.data.privateKey)){
     throw self.taskError('Unable to locate your private key.');
   }
 
-  self.data.manifest = grunt.file.readJSON(path.join(self.file.src, 'manifest.json'));
+  self.data.manifest = grunt.file.readJSON(path.join(self.data.src, 'manifest.json'));
   if (!self.data.manifest.version || !self.data.manifest.name || !self.data.manifest.manifest_version){
     throw self.taskError('Invalid manifest: one or more property is missing.');
   }
@@ -52,7 +52,7 @@ function configure(defaults){
   // Expanding filename
   self.data.filename = grunt.template.process(
     self.data.filename,
-    grunt.utils._.extend(grunt.config(), {
+    grunt.util._.extend(grunt.config(), {
       "manifest": self.data.manifest,
       "pkg": grunt.config('pkg') || grunt.file.readJSON('package.json')
     })
@@ -61,7 +61,7 @@ function configure(defaults){
   // Preparing filesystem
   // @todo maybe use a basepath to avoid execution context problems
   //grunt.file.mkdir(self.data.buildDir);
-  grunt.file.mkdir(path.dirname(self.file.dest));
+  grunt.file.mkdir(path.dirname(self.data.dest));
 }
 
 module.exports = function(grunt) {
@@ -92,13 +92,13 @@ module.exports = function(grunt) {
       "codebase": this.data.baseURL ? this.data.baseURL + this.data.filename : '',
       "maxBuffer": this.data.options.maxBuffer,
       "privateKey": fs.readFileSync(this.data.privateKey),
-      "rootDirectory": this.file.src,
-      "dest": path.join(this.file.dest, this.data.filename),
+      "rootDirectory": this.data.src,
+      "dest": path.join(this.data.dest, this.data.filename),
       "exclude": this.data.exclude
     });
 
     // Building
-    grunt.utils.async.series([
+    grunt.util.async.series([
       // Building extension
       function(callback){
         crx(extension, callback);
@@ -121,7 +121,7 @@ module.exports = function(grunt) {
   // ==========================================================================
 
   function crx(ChromeExtension, callback) {
-    grunt.utils.async.series([
+    grunt.util.async.series([
       function(done){
         ChromeExtension.load(done);
       },
