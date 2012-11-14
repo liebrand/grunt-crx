@@ -37,10 +37,10 @@ function configure(defaults){
   grunt.util._.defaults(self.data, defaults);
 
   // Checking availability
-  if (!path.existsSync(self.data.src)){
+  if (!fs.existsSync(self.data.src)){
     throw self.taskError('Unable to locate source directory.');
   }
-  if (!path.existsSync(self.data.privateKey)){
+  if (!fs.existsSync(self.data.privateKey)){
     throw self.taskError('Unable to locate your private key.');
   }
 
